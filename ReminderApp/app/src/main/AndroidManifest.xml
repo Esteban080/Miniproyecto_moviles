@@ -7,6 +7,8 @@
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE"
         android:maxSdkVersion="28" />
     <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
+    <uses-permission android:name="android.permission.POST_NOTIFICATIONS" />
+
 
     <!-- Declaración opcional de hardware de cámara -->
     <uses-feature android:name="android.hardware.camera" android:required="false" />
@@ -32,6 +34,9 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+
+        <!-- 🔔 BroadcastReceiver para notificaciones -->
+        <receiver android:name=".ReminderReceiver" android:exported="false" />
     </application>
 
 </manifest>

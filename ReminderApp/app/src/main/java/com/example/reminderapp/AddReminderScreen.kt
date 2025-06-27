@@ -1,11 +1,10 @@
 package com.example.reminderapp
 
-import android.Manifest
 import android.app.DatePickerDialog
-import android.content.pm.PackageManager
+import android.content.Context
+import android.content.Intent
 import android.net.Uri
 import android.provider.MediaStore
-import android.widget.Toast
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.Image
@@ -18,9 +17,12 @@ import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.unit.dp
-import androidx.core.content.ContextCompat
 import coil.compose.rememberAsyncImagePainter
+import java.text.SimpleDateFormat
 import java.util.*
+import android.app.AlarmManager
+import android.app.PendingIntent
+
 
 @Composable
 fun AddReminderScreen(
@@ -33,7 +35,6 @@ fun AddReminderScreen(
     var date by remember { mutableStateOf("") }
     var imageUri by remember { mutableStateOf<Uri?>(null) }
 
-    // Camera launcher
     val cameraLauncher = rememberLauncherForActivityResult(
         contract = ActivityResultContracts.TakePicturePreview()
     ) { bitmap ->
@@ -47,18 +48,6 @@ fun AddReminderScreen(
         }
     }
 
-    // Request permission launcher
-    val cameraPermissionLauncher = rememberLauncherForActivityResult(
-        contract = ActivityResultContracts.RequestPermission()
-    ) { isGranted ->
-        if (isGranted) {
-            cameraLauncher.launch(null)
-        } else {
-            Toast.makeText(context, "Permiso de cámara denegado", Toast.LENGTH_SHORT).show()
-        }
-    }
-
-    // Date picker
     val calendar = Calendar.getInstance()
     val datePickerDialog = DatePickerDialog(
         context,
@@ -102,17 +91,7 @@ fun AddReminderScreen(
 
         Spacer(modifier = Modifier.height(8.dp))
 
-        Button(onClick = {
-            if (ContextCompat.checkSelfPermission(
-                    context,
-                    Manifest.permission.CAMERA
-                ) == PackageManager.PERMISSION_GRANTED
-            ) {
-                cameraLauncher.launch(null)
-            } else {
-                cameraPermissionLauncher.launch(Manifest.permission.CAMERA)
-            }
-        }) {
+        Button(onClick = { cameraLauncher.launch(null) }) {
             Text("Tomar Foto")
         }
 
@@ -145,6 +124,7 @@ fun AddReminderScreen(
                             imagePath = imageUri?.toString()
                         )
                         onSave(reminder)
+                        scheduleNotification(context, reminder)
                     }
                 },
                 colors = ButtonDefaults.buttonColors(containerColor = Color(0xFF4CAF50))
@@ -160,4 +140,30 @@ fun AddReminderScreen(
             }
         }
     }
+}
+
+fun scheduleNotification(context: Context, reminder: Reminder) {
+    val intent = Intent(context, ReminderReceiver::class.java).apply {
+        putExtra("title", reminder.title)
+        putExtra("message", reminder.description)
+    }
+
+    val pendingIntent = PendingIntent.getBroadcast(
+        context,
+        System.currentTimeMillis().toInt(),
+        intent,
+        PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE
+    )
+
+    val alarmManager = context.getSystemService(Context.ALARM_SERVICE) as AlarmManager
+
+    val format = SimpleDateFormat("dd/MM/yyyy", Locale.getDefault())
+    val reminderDate = format.parse(reminder.date)
+    val triggerAtMillis = reminderDate.time - 60 * 60 * 1000 // 1 hora antes
+
+    alarmManager.setExact(
+        AlarmManager.RTC_WAKEUP,
+        triggerAtMillis,
+        pendingIntent
+    )
 }
