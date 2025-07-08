@@ -31,7 +31,7 @@ class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
-        // ✅ Permiso para notificaciones
+        
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
             if (ContextCompat.checkSelfPermission(
                     this,
@@ -129,7 +129,7 @@ fun ReminderItem(reminder: Reminder, onDelete: (Reminder) -> Unit) {
                 }
             }
 
-            // ✅ Botón de eliminar arriba a la derecha
+            
             IconButton(
                 onClick = { onDelete(reminder) },
                 modifier = Modifier

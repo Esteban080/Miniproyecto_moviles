@@ -161,7 +161,7 @@ fun scheduleNotification(context: Context, reminder: Reminder) {
 
     // Verifica que la fecha no sea null antes de usarla
     reminderDate?.let {
-        val triggerAtMillis = it.time - 60 * 60 * 1000 // 1 hora antes
+        val triggerAtMillis = it.time - 60 * 60 * 1000 
         alarmManager.setExact(
             AlarmManager.RTC_WAKEUP,
             triggerAtMillis,
