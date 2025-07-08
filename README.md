@@ -51,3 +51,23 @@ Con esta aplicación se busca brindar una solución sencilla para **registrar re
 - **JSON** para almacenamiento local
 
 ---
+
+### 📲 Instalación por USB
+Para probar esta aplicación en un dispositivo físico:
+
+1. Activa el **modo desarrollador** en tu teléfono Android.
+2. Habilita la opción **Depuración por USB**.
+3. Conecta tu teléfono por USB al computador.
+4. Ejecuta el proyecto desde Android Studio haciendo clic en **Run ▶** y seleccionando tu dispositivo físico.
+
+> 💡 Esta app no está publicada en la Play Store. Por ahora, solo se instala localmente desde Android Studio.
+
+### ⚠️ Permisos necesarios
+La aplicación requiere los siguientes permisos para funcionar correctamente:
+
+- **Permiso de cámara:** para tomar fotos con la cámara del dispositivo.
+- **Permiso de notificaciones:** para poder mostrar alertas cuando se acerque la fecha del recordatorio.
+
+> 📌 Al iniciar por primera vez, asegúrate de **aceptar los permisos solicitados**. Si se rechazan, puedes activarlos manualmente desde la configuración del dispositivo.
+
+---
