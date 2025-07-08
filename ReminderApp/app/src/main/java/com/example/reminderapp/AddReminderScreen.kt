@@ -23,7 +23,6 @@ import java.util.*
 import android.app.AlarmManager
 import android.app.PendingIntent
 
-
 @Composable
 fun AddReminderScreen(
     onSave: (Reminder) -> Unit,
@@ -145,7 +144,7 @@ fun AddReminderScreen(
 fun scheduleNotification(context: Context, reminder: Reminder) {
     val intent = Intent(context, ReminderReceiver::class.java).apply {
         putExtra("title", reminder.title)
-        putExtra("message", reminder.description)
+        putExtra("description", reminder.description)
     }
 
     val pendingIntent = PendingIntent.getBroadcast(
@@ -159,11 +158,14 @@ fun scheduleNotification(context: Context, reminder: Reminder) {
 
     val format = SimpleDateFormat("dd/MM/yyyy", Locale.getDefault())
     val reminderDate = format.parse(reminder.date)
-    val triggerAtMillis = reminderDate.time - 60 * 60 * 1000 // 1 hora antes
 
-    alarmManager.setExact(
-        AlarmManager.RTC_WAKEUP,
-        triggerAtMillis,
-        pendingIntent
-    )
+    // Verifica que la fecha no sea null antes de usarla
+    reminderDate?.let {
+        val triggerAtMillis = it.time - 60 * 60 * 1000 // 1 hora antes
+        alarmManager.setExact(
+            AlarmManager.RTC_WAKEUP,
+            triggerAtMillis,
+            pendingIntent
+        )
+    }
 }
